@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-server
+  template:
+    metadata:
+      labels:
+        app: todo-server
+    spec:
+      containers:
+      - name: todo-server
+        image: mohammed102003/todo-server:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: MONGO_URL
+          value: "mongodb://$(MONGO_USER):$(MONGO_PASSWORD)@mongo-service:27017/todoapp"
+        - name: MONGO_USER
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-user
+        - name: MONGO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-password
