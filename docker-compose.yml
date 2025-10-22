@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo
+    container_name: todo-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  server:
+    build: ./server
+    container_name: todo-server
+    ports:
+      - "5001:4000"
+    environment:
+      - PORT=4000
+      - MONGO_URL=mongodb://mongo:27017/todoapp
+    depends_on:
+      - mongo
+
+  client:
+    build: ./client
+    container_name: todo-client
+    ports:
+      - "3002:3000"
+    environment:
+      - REACT_APP_API_URL=http://server:5000
+    depends_on:
+      - server
+
+volumes:
+  mongo_data:
+    
